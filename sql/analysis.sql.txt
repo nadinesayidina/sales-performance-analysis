@@ -1,0 +1,109 @@
+kueri 1 Total sales, profit, quantity : 
+SELECT
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit,
+    SUM(quantity) AS total_quantity
+FROM sales;
+
+kueri 2 Sales dan profit by category : 
+SELECT
+    category,
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit,
+    SUM(quantity) AS total_quantity
+FROM sales
+GROUP BY category
+ORDER BY total_sales DESC;
+
+kueri 3 Sales dan profit by region :
+SELECT
+    region,
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit,
+    SUM(quantity) AS total_quantity
+FROM sales
+GROUP BY region
+ORDER BY total_sales DESC;
+
+kueri 4 Sales by month :
+SELECT
+    order_month,
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit
+FROM sales
+GROUP BY order_month
+ORDER BY order_month ASC;
+
+kueri 5 Top product by sales :
+SELECT
+    product_name,
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit,
+    SUM(quantity) AS total_quantity
+FROM sales
+GROUP BY product_name
+ORDER BY total_sales DESC
+LIMIT 10;
+
+kueri 6 Top product by profit :
+SELECT
+    product_name,
+    SUM(profit) AS total_profit,
+    SUM(sales) AS total_sales,
+    SUM(quantity) AS total_quantity
+FROM sales
+GROUP BY product_name
+ORDER BY total_profit DESC
+LIMIT 10;
+
+kueri 7 Profit margin by category :
+SELECT
+    category,
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit,
+    ROUND(SUM(profit) / NULLIF(SUM(sales), 0) * 100, 2) AS profit_margin_percentage
+FROM sales
+GROUP BY category
+ORDER BY profit_margin_percentage DESC;
+
+kueri 8 Transaksi dengan profit negative :
+SELECT
+    order_id,
+    order_date,
+    product_name,
+    category,
+    sales,
+    cost,
+    profit,
+    discount,
+    ROUND(profit / NULLIF(sales, 0) * 100, 2) AS profit_margin_percentage
+FROM sales
+WHERE profit < 0
+ORDER BY profit ASC;
+
+kueri 9 Transaksi dengan discount tinggi :
+SELECT
+    order_id,
+    order_date,
+    product_name,
+    category,
+    sales,
+    profit,
+    discount,
+    ROUND(profit / NULLIF(sales, 0) * 100, 2) AS profit_margin_percentage
+FROM sales
+WHERE discount >= 0.25
+ORDER BY discount DESC, profit ASC;
+
+
+kueri 10 Produk sales tinggi tapi margin rendah :
+SELECT
+    product_name,
+    category,
+    SUM(sales) AS total_sales,
+    SUM(profit) AS total_profit,
+    ROUND(SUM(profit) / NULLIF(SUM(sales), 0) * 100, 2) AS profit_margin_percentage
+FROM sales
+GROUP BY product_name, category
+HAVING total_sales > 100000000
+ORDER BY profit_margin_percentage ASC;
